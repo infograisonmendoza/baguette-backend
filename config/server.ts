@@ -1,9 +1,18 @@
 export default ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
+  url: env('PUBLIC_URL', 'https://baguette-backend.onrender.com'),
+  proxy: true,
   app: {
     keys: env.array('APP_KEYS'),
   },
-  url: env('PUBLIC_URL', 'https://baguette-backend.onrender.com'),
-  proxy: true,
+  admin: {
+    auth: {
+      secret: env('JWT_SECRET', '8TPRMXPNqXuQBxH0N//KDg==')
+    },
+    cookies: {
+      secure: true,
+      sameSite: 'none'
+    }
+  }
 });
