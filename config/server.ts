@@ -5,5 +5,5 @@ export default ({ env }) => ({
     keys: env.array('APP_KEYS'),
   },
   url: env('PUBLIC_URL', 'https://baguette-backend.onrender.com'),
-  proxy: true, // 👈 importante
+  proxy: true,
 });
