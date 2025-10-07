@@ -4,13 +4,14 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
+    "start": "strapi start",
+    "develop": "strapi develop",
     "build": "strapi build",
+
     "console": "strapi console",
     "deploy": "strapi deploy",
     "dev": "strapi develop",
-    "develop": "strapi develop",
     "seed:example": "node ./scripts/seed.js",
-    "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
