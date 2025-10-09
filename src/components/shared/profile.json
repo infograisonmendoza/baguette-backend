@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_shared_profiles",
+  "info": {
+    "displayName": "Profile"
+  },
+  "options": {},
+  "attributes": {
+    "identification_photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  },
+  "config": {}
+}
