@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "waiters",
+  "info": {
+    "singularName": "waiter",
+    "pluralName": "waiters",
+    "displayName": "Waiter"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "alias": {
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "waiterAlias": {
+      "type": "uid",
+      "targetField": "alias"
+    },
+    "tables": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::table.table",
+      "mappedBy": "waiter"
+    }
+  }
+}

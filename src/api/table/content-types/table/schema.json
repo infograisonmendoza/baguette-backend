@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tables",
+  "info": {
+    "singularName": "table",
+    "pluralName": "tables",
+    "displayName": "Table"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "table_name": {
+      "type": "string",
+      "minLength": 1,
+      "unique": true
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "occupied": {
+      "type": "boolean",
+      "default": false
+    },
+    "seats": {
+      "type": "integer"
+    },
+    "idByName": {
+      "type": "uid",
+      "targetField": "table_name"
+    },
+    "waiter": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::waiter.waiter",
+      "conditions": {
+        "visible": {
+          "!=": [
+            {
+              "var": "occupied"
+            },
+            false
+          ]
+        }
+      },
+      "inversedBy": "tables"
+    },
+    "customerName": {
+      "type": "string",
+      "conditions": {
+        "visible": {
+          "==": [
+            {
+              "var": "occupied"
+            },
+            true
+          ]
+        }
+      },
+      "minLength": 6,
+      "unique": true
+    }
+  }
+}

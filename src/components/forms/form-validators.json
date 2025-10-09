@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_forms_form_validators",
+  "info": {
+    "displayName": "form_validators",
+    "icon": "file"
+  },
+  "options": {},
+  "attributes": {
+    "required": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "isFull": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

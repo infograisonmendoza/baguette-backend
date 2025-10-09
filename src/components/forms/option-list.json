@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_forms_option_lists",
+  "info": {
+    "displayName": "optionList"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "unique": false
+    },
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "isMulti": {
+      "type": "boolean"
+    },
+    "list": {
+      "type": "component",
+      "component": "forms.option",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}
