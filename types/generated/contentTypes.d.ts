@@ -470,6 +470,7 @@ export interface ApiAreaArea extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    area_id: Schema.Attribute.UID<'name'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -480,6 +481,7 @@ export interface ApiAreaArea extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     path: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    tables: Schema.Attribute.Relation<'oneToMany', 'api::table.table'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -636,6 +638,7 @@ export interface ApiTableTable extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    area_id: Schema.Attribute.Relation<'manyToOne', 'api::area.area'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

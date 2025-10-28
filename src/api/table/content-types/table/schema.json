@@ -61,6 +61,12 @@
       },
       "minLength": 6,
       "unique": true
+    },
+    "area_id": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::area.area",
+      "inversedBy": "tables"
     }
   }
 }
