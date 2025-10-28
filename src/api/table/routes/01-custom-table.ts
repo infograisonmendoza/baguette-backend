@@ -3,7 +3,7 @@ export default {
     {
       method: "GET",
       path: "/tables/list",
-      handler: "table.customAction",
+      handler: "table.find",
       config: {
         auth: false,
       },
