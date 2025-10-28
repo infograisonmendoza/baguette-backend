@@ -22,12 +22,6 @@
       "type": "component",
       "component": "shared.profile",
       "repeatable": false
-    },
-    "menu_items": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::menu-item.menu-item",
-      "mappedBy": "category"
     }
   }
 }

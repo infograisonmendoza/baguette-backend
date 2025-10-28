@@ -5,11 +5,10 @@
   "description": "A Strapi application",
   "scripts": {
     "start": "strapi start",
-    "develop": "strapi develop",
+    "dev": "strapi develop",
     "build": "strapi build",
     "console": "strapi console",
     "deploy": "strapi deploy",
-    "dev": "strapi develop",
     "seed:example": "node ./scripts/seed.js",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
