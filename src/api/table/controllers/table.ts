@@ -7,8 +7,8 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
   "api::table.table",
   ({ strapi }) => {
-    const service = strapi.service("api::menu-item.menu-item");
-    const DB = strapi.db.query("api::menu-item.menu-item");
+    const service = strapi.service("api::table.table");
+    const DB = strapi.db.query("api::table.table");
 
     return {
       async find(ctx) {
@@ -48,7 +48,7 @@ export default factories.createCoreController(
             return ctx.badRequest("Id required!");
           }
 
-          const entity = await service.create({ data });
+          const entity = await service.update(data.id, { data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -82,8 +82,8 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Table deleted successfully!"
-          }
+            message: "Table deleted successfully!",
+          };
         } catch (error) {
           ctx.body = {
             success: false,
