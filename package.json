@@ -4,8 +4,8 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
-    "start": "strapi start",
-    "dev": "strapi develop",
+    "start": "strapi develop",
+    "prod": "strapi start",
     "build": "strapi build",
     "console": "strapi console",
     "deploy": "strapi deploy",
