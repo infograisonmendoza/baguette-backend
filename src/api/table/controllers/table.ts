@@ -65,27 +65,32 @@ export default factories.createCoreController(
       },
       async delete(ctx) {
         try {
-            const { id } = ctx.params;
-            const ID = parseInt(id, 10);
+          const { id } = ctx.params;
+          const ID = parseInt(id, 10);
 
-            if (!id) return ctx.badRequest("id required!");
+          if (!id) return ctx.badRequest("id required!");
 
-            const found = await DB.findOne({
-                where: {id: ID},
-            })
+          const found = await DB.findOne({
+            where: { id: ID },
+          });
 
-            if (!found) return ctx.notFound("Table doesn't exist")
+          if (!found) return ctx.notFound("Table doesn't exist");
 
-            await DB.delete({
-                where: { id: ID }
-            })
+          await DB.delete({
+            where: { id: ID },
+          });
+
+          ctx.body = {
+            success: true,
+            message: "Table deleted successfully!"
+          }
         } catch (error) {
-            ctx.body = {
-                success: false,
-                message: error.message,
-            }
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
         }
-      }
+      },
     };
   }
 );
