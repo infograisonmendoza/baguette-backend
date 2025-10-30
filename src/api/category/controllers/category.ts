@@ -59,7 +59,7 @@ export default factories.createCoreController(
             return ctx.badRequest("Id required!");
           }
 
-          const entity = await service.create({ data });
+          const entity = await service.update(data.id, { data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {

@@ -50,7 +50,19 @@ export default factories.createCoreController(
       },
       async edit(ctx) {
         try {
-            
+          const { data } = ctx.request.body;
+          if (!data || !data.id) {
+            return ctx.badRequest("ID required!")
+          }
+
+          const entity = await service.update(data.id, { data });
+          const sanitized = await this.sanitizeOutput(entity, ctx);
+
+          ctx.body = {
+            success: true,
+            message: "Category edited successfully!",
+            data: sanitized,
+          };
         } catch (error) {
           ctx.body = {
             success: false,
