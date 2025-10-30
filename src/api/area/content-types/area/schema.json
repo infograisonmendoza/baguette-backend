@@ -29,6 +29,11 @@
       "relation": "oneToMany",
       "target": "api::table.table",
       "mappedBy": "area_id"
+    },
+    "active": {
+      "type": "boolean",
+      "required": false,
+      "default": true
     }
   }
 }
