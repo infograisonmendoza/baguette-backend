@@ -1,7 +1,7 @@
 export default {
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/menu-items/list",
       handler: "menu-item.find",
       config: {

@@ -26,29 +26,37 @@ export default factories.createCoreController(
 
     return {
       async find(ctx) {
+        const body = ctx.request.body.data;
         ctx.query = {
           ...ctx.query,
           populate: "*",
-          filters: {
-            active: { $eq: true },
-          },
         };
+
+        const props = Object.entries(body);
+
+        if (props.length) {
+          for await (const [key, value] of props) {
+            const filters: any = ctx.query.filters;
+            const opt = typeof value !== "string" ? "$eq" : "$containsi";
+
+            ctx.query = {
+              ...ctx.query,
+              filters: {
+                ...filters,
+                [key]: { [opt]: value },
+              },
+            };
+          }
+        }
 
         const { data, meta } = await super.find(ctx);
         const { pagination } = meta;
-        const formatted = data.map((el) => {
-          let body = {};
-          for (const prop of PropsToShow) {
-            body[prop] = el[prop];
-          }
-          return body;
-        });
 
         ctx.body = {
           success: true,
           message: "Category listed successfully!",
-          data: formatted,
-          pagination,
+          data,
+          ...pagination,
         };
       },
       async create(ctx) {

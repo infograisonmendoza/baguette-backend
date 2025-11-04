@@ -1,7 +1,7 @@
 export default {
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/waiters/list",
       handler: "waiter.find",
       config: {

@@ -12,7 +12,7 @@ const propsToShow = [
   "active",
   "waiterAlias",
   "table_id",
-]
+];
 
 export default factories.createCoreController(
   "api::waiter.waiter",
@@ -21,23 +21,41 @@ export default factories.createCoreController(
     const DB = strapi.db.query("api::waiter.waiter");
     return {
       async find(ctx) {
-        ctx.query = {
-          ...ctx.query,
-          populate: "*",
-        };
-        const { data, meta } = await super.find(ctx);
-        const { pagination } = meta;
-        const formatted = data.map((el) => {
-          let obj = {};
-          for (const prop of propsToShow) {
-            obj[prop] = el[prop];
+        try {
+          const body = ctx.request.body.data;
+          ctx.query = {
+            ...ctx.query,
+            populate: "*",
+          };
+
+          const props = Object.entries(body);
+
+          if (props.length) {
+            for await (const [key, value] of props) {
+              const filters: any = ctx.query.filters;
+              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+
+              ctx.query = {
+                ...ctx.query,
+                filters: {
+                  ...filters,
+                  [key]: { [opt]: value },
+                },
+              };
+            }
           }
-          return obj;
-        });
 
-        console.log(formatted[0]);
+          const { data, meta } = await super.find(ctx);
+          const { pagination } = meta;
 
-        return { ...pagination, data: formatted };
+          meta.date = Date.now();
+          return { data, ...pagination, status: true, message: "" };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
+        }
       },
       async create(ctx) {
         try {
@@ -49,7 +67,7 @@ export default factories.createCoreController(
 
           const entity = await service.create({ data });
           console.log(data.table_id, entity);
-          
+
           ctx.body = {
             success: true,
             message: "Waiter created successfully :D",

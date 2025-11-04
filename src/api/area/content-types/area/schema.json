@@ -20,20 +20,13 @@
     "path": {
       "type": "string"
     },
-    "area_id": {
-      "type": "uid",
-      "targetField": "name"
-    },
-    "tables": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::table.table",
-      "mappedBy": "area_id"
-    },
     "active": {
       "type": "boolean",
       "required": false,
       "default": true
+    },
+    "area_id": {
+      "type": "integer"
     }
   }
 }

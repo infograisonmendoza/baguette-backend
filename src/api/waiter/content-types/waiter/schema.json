@@ -26,12 +26,6 @@
     "waiterAlias": {
       "type": "uid",
       "targetField": "alias"
-    },
-    "table_id": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::table.table",
-      "inversedBy": "waiter_id"
     }
   }
 }

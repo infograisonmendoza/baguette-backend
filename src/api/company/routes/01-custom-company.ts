@@ -1,7 +1,7 @@
 export default {
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/companies/list",
       handler: "company.find",
       config: {

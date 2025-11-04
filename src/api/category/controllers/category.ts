@@ -13,20 +13,34 @@ export default factories.createCoreController(
     return {
       async find(ctx) {
         try {
-          const body = ctx.params;
+          const body = ctx.request.body.data;
           ctx.query = {
             ...ctx.query,
             populate: "*",
-            filters: {
-              active: { $eq: body?.active ?? true },
-            },
           };
+
+          const props = Object.entries(body);
+
+          if (props.length) {
+            for await (const [key, value] of props) {
+              const filters: any = ctx.query.filters;
+              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+
+              ctx.query = {
+                ...ctx.query,
+                filters: {
+                  ...filters,
+                  [key]: { [opt]: value },
+                },
+              };
+            }
+          }
+
           const { data, meta } = await super.find(ctx);
           const { pagination } = meta;
-          const { status, message } = ctx.response;
 
           meta.date = Date.now();
-          return { data, pagination, status, message };
+          return { data, ...pagination, status: true, message: "OK" };
         } catch (error) {
           ctx.body = {
             success: false,

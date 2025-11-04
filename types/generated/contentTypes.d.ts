@@ -471,7 +471,7 @@ export interface ApiAreaArea extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    area_id: Schema.Attribute.UID<'name'>;
+    area_id: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -482,7 +482,6 @@ export interface ApiAreaArea extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     path: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    tables: Schema.Attribute.Relation<'oneToMany', 'api::table.table'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -504,17 +503,13 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    image: Schema.Attribute.Component<'shared.profile', false>;
+    image_pth: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::category.category'
     > &
       Schema.Attribute.Private;
-    menu_items: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::menu-item.menu-item'
-    >;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
@@ -598,10 +593,7 @@ export interface ApiMenuItemMenuItem extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    categoryId: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::category.category'
-    >;
+    category_id: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -649,7 +641,7 @@ export interface ApiTableTable extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    area_id: Schema.Attribute.Relation<'manyToOne', 'api::area.area'>;
+    area_id: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -673,7 +665,8 @@ export interface ApiTableTable extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    waiter_id: Schema.Attribute.Relation<'oneToMany', 'api::waiter.waiter'>;
+    waiter_id: Schema.Attribute.Integer;
+    waiter_name: Schema.Attribute.String;
   };
 }
 
@@ -702,7 +695,6 @@ export interface ApiWaiterWaiter extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    table_id: Schema.Attribute.Relation<'manyToOne', 'api::table.table'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

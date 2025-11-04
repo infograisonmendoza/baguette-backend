@@ -1,7 +1,7 @@
 export default {
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/categories/list",
       handler: "category.find",
       config: {

@@ -1,7 +1,7 @@
 export default {
   routes: [
     {
-      method: "GET",
+      method: "POST",
       path: "/warehouses/list",
       handler: "warehouse.find",
       config: {
@@ -25,7 +25,7 @@ export default {
       },
     },
     {
-      method: "POST",
+      method: "DELETE",
       path: "/warehouses/delete",
       handler: "warehouse.delete",
       config: {

@@ -41,7 +41,7 @@ export default factories.createCoreController(
             return ctx.badRequest("Empty body");
           }
 
-          const entity = await service.create({ data })
+          const entity = await service.create({ data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -58,19 +58,19 @@ export default factories.createCoreController(
       },
       async edit(ctx) {
         try {
-            const { data } = ctx.request.body;
-            if (!data || !data.id) {
-                return ctx.badRequest("ID required!");
-            }
+          const { data } = ctx.request.body;
+          if (!data || !data.id) {
+            return ctx.badRequest("ID required!");
+          }
 
-            const entity = service.update(data.id, { data });
-            // const sanitized = await this.sanitizeOutput(entity, ctx);
+          const entity = await DB.update({ where: data.id, data });
+          const sanitized = await this.sanitizeOutput(entity, ctx);
 
-            ctx.body = {
-                success: true,
-                message: "Edited successfully!",
-                data: entity,
-            }
+          ctx.body = {
+            success: true,
+            message: "Edited successfully!",
+            data: sanitized,
+          };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -80,10 +80,28 @@ export default factories.createCoreController(
       },
       async delete(ctx) {
         try {
-        } catch (error) {
+          const { id } = ctx.params;
+          if (!id) return ctx.badRequest("ID required");
+
+          const existing = await DB.findOne({
+            where: { id: parseInt(id, 10) },
+          });
+
+          if (!existing) return ctx.notFound("Waiter doesn't exist");
+
+          await DB.delete({
+            where: { id: parseInt(id, 10) },
+          });
+
+          const { firstName, lastName, alias } = existing;
+          ctx.body = {
+            success: true,
+            message: `Warehouse successfully deleted!`,
+          };
+        } catch (err) {
           ctx.body = {
             success: false,
-            message: error.message,
+            message: err.message,
           };
         }
       },

@@ -18,16 +18,8 @@
       "type": "boolean",
       "default": true
     },
-    "image": {
-      "type": "component",
-      "component": "shared.profile",
-      "repeatable": false
-    },
-    "menu_items": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::menu-item.menu-item",
-      "mappedBy": "categoryId"
+    "image_pth": {
+      "type": "text"
     }
   }
 }
