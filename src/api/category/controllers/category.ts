@@ -7,15 +7,19 @@ import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
   "api::category.category",
   ({ strapi }) => {
-    const service = strapi.service("api::area.area");
-    const DB = strapi.db.query("api::area.area");
+    const service = strapi.service("api::category.category");
+    const DB = strapi.db.query("api::category.category");
 
     return {
       async find(ctx) {
         try {
+          const body = ctx.params;
           ctx.query = {
             ...ctx.query,
             populate: "*",
+            filters: {
+              active: { $eq: body?.active ?? true },
+            },
           };
           const { data, meta } = await super.find(ctx);
           const { pagination } = meta;
@@ -59,7 +63,10 @@ export default factories.createCoreController(
             return ctx.badRequest("Id required!");
           }
 
-          const entity = await service.update(data.id, { data });
+          const entity = await DB.update({
+            where: { id: data.id },
+            data,
+          });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -76,25 +83,26 @@ export default factories.createCoreController(
       },
       async delete(ctx) {
         try {
-            const { id } = ctx.params;
-            const ID = parseInt(id, 10);
+          const { id } = ctx.params;
+          const ID = parseInt(id, 10);
 
-            if (!id) return ctx.badRequest("id required!");
+          if (!id) return ctx.badRequest("id required!");
 
-            const found = await DB.findOne({
-                where: { id: ID }
-            });
+          const found = await DB.findOne({
+            where: { id: ID },
+          });
 
-            if(!found) return ctx.notFound("");
+          if (!found) return ctx.notFound("Category not found!");
 
-            await DB.delete({
-                where: { id: ID }
-            })
+          await DB.update({
+            where: { id: ID },
+            data: { ...found, active: false },
+          });
 
-            ctx.body = {
-                success: true,
-                message: "Category deleted successfully!",
-            }
+          ctx.body = {
+            success: true,
+            message: "Category deleted successfully!",
+          };
         } catch (error) {
           ctx.body = {
             success: false,

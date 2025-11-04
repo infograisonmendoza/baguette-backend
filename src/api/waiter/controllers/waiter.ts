@@ -4,6 +4,16 @@
 
 import { factories } from "@strapi/strapi";
 
+const propsToShow = [
+  "id",
+  "firstName",
+  "lastName",
+  "alias",
+  "active",
+  "waiterAlias",
+  "table_id",
+]
+
 export default factories.createCoreController(
   "api::waiter.waiter",
   ({ strapi }) => {
@@ -16,23 +26,19 @@ export default factories.createCoreController(
           populate: "*",
         };
         const { data, meta } = await super.find(ctx);
-        const formatted = data.map((el) => ({
-          id: el.id,
-          firstName: el.firstName,
-          lastName: el.lastName,
-          alias: el.alias,
-          active: el.active,
-          waiterAlias: el.waiterAlias,
-          tables: el.tables.map((el) => ({
-            id: el.id,
-            table_name: el.table_name,
-            active: el.active,
-            occupied: el.occupied,
-          })),
-        }));
-        return { data: formatted, meta };
-      },
+        const { pagination } = meta;
+        const formatted = data.map((el) => {
+          let obj = {};
+          for (const prop of propsToShow) {
+            obj[prop] = el[prop];
+          }
+          return obj;
+        });
 
+        console.log(formatted[0]);
+
+        return { ...pagination, data: formatted };
+      },
       async create(ctx) {
         try {
           const { data } = ctx.request.body;
@@ -42,6 +48,32 @@ export default factories.createCoreController(
           }
 
           const entity = await service.create({ data });
+          console.log(data.table_id, entity);
+          
+          ctx.body = {
+            success: true,
+            message: "Waiter created successfully :D",
+            data: { ...entity, table_id: data.table_id },
+          };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
+        }
+      },
+      async edit(ctx) {
+        try {
+          const { data } = ctx.request.body;
+
+          if (!data.firstName || !data.lastName) {
+            return ctx.badRequest("First and last name are required! >:( ");
+          }
+
+          const entity = await DB.update({
+            where: { id: data.id },
+            data,
+          });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -56,7 +88,6 @@ export default factories.createCoreController(
           };
         }
       },
-
       async delete(ctx) {
         try {
           const { id } = ctx.params;

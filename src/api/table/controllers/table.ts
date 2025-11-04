@@ -12,6 +12,14 @@ export default factories.createCoreController(
 
     return {
       async find(ctx) {
+        ctx.query = {
+          ...ctx.query,
+          populate: "*",
+          filters: {
+            active: { $eq: true },
+          },
+        };
+
         const { data, meta } = await super.find(ctx);
         const { pagination } = meta;
         const { status, message } = ctx.response;
@@ -25,6 +33,8 @@ export default factories.createCoreController(
           if (!data) {
             return ctx.badRequest("Empty body");
           }
+
+          console.log(data);
 
           const entity = await service.create({ data });
           const sanitized = await this.sanitizeOutput(entity, ctx);

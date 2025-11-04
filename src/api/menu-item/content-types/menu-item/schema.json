@@ -46,6 +46,16 @@
       "type": "component",
       "component": "dish-props.dish-option",
       "repeatable": true
+    },
+    "categoryId": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "menu_items"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
     }
   }
 }

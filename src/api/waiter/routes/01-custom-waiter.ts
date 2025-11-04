@@ -1,9 +1,27 @@
 export default {
   routes: [
     {
+      method: "GET",
+      path: "/waiters/list",
+      handler: "waiter.find",
+      config: {
+        auth: false, // o true si quieres requerir JWT
+        policies: [],
+      },
+    },
+    {
       method: "POST",
       path: "/waiters/create",
       handler: "waiter.create",
+      config: {
+        auth: false, // o true si quieres requerir JWT
+        policies: [],
+      },
+    },
+    {
+      method: "POST",
+      path: "/waiters/edit",
+      handler: "waiter.edit",
       config: {
         auth: false, // o true si quieres requerir JWT
         policies: [],

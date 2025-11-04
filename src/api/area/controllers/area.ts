@@ -13,9 +13,13 @@ export default factories.createCoreController(
     return {
       async find(ctx) {
         try {
+          const body = ctx.params;
           ctx.query = {
             ...ctx.query,
             populate: "*",
+            filters: {
+              active: { $eq: body?.active ?? true },
+            },
           };
 
           const { data, meta } = await super.find(ctx);

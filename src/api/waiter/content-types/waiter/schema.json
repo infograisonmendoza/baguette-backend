@@ -27,11 +27,11 @@
       "type": "uid",
       "targetField": "alias"
     },
-    "tables": {
+    "table_id": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "api::table.table",
-      "mappedBy": "waiter"
+      "inversedBy": "waiter_id"
     }
   }
 }

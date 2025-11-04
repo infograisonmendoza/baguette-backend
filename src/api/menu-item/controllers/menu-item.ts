@@ -15,6 +15,7 @@ const PropsToShow = [
   "observation",
   "options",
   "category",
+  "active",
 ];
 
 export default factories.createCoreController(
@@ -28,6 +29,9 @@ export default factories.createCoreController(
         ctx.query = {
           ...ctx.query,
           populate: "*",
+          filters: {
+            active: { $eq: true },
+          },
         };
 
         const { data, meta } = await super.find(ctx);
@@ -78,7 +82,10 @@ export default factories.createCoreController(
             return ctx.badRequest("No data provides for update");
           }
 
-          const entity = await service.update(data.id, { data });
+          const entity = await DB.update({
+            where: { id: data.id },
+            data,
+          });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -98,21 +105,22 @@ export default factories.createCoreController(
           const { id } = ctx.params;
           const ID = parseInt(id, 10);
 
-          if (!id) return ctx.notFound("Waiter does'nt exist");
+          if (!id) return ctx.badRequest("id required!");
 
           const found = await DB.findOne({
             where: { id: ID },
           });
 
-          if (!found) return ctx.notFound("Waiter doesn't exist");
+          if (!found) return ctx.notFound("Dish not found!");
 
-          await DB.delete({
+          await DB.update({
             where: { id: ID },
+            data: { ...found, active: false },
           });
 
           ctx.body = {
             success: true,
-            message: `${found.name} has been deleted correctly`,
+            message: "Dish deleted successfully!",
           };
         } catch (error) {
           ctx.body = {

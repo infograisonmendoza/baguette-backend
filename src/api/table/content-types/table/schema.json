@@ -31,21 +31,11 @@
       "type": "uid",
       "targetField": "table_name"
     },
-    "waiter": {
+    "waiter_id": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToMany",
       "target": "api::waiter.waiter",
-      "conditions": {
-        "visible": {
-          "!=": [
-            {
-              "var": "occupied"
-            },
-            false
-          ]
-        }
-      },
-      "inversedBy": "tables"
+      "mappedBy": "table_id"
     },
     "customerName": {
       "type": "string",
