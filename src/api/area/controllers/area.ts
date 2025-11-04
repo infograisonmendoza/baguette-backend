@@ -60,7 +60,10 @@ export default factories.createCoreController(
             return ctx.badRequest("Id required!");
           }
 
-          const entity = await service.update(data.id, { data });
+          const entity = await DB.update({
+            where: { id: data.id },
+            data,
+          });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
@@ -88,13 +91,19 @@ export default factories.createCoreController(
 
           if (!found) return ctx.notFound("Area doesn't exist");
 
-          await DB.delete({
+          const entity = await DB.update({
             where: { id: ID },
+            data: {
+              ...found,
+              active: false,
+            },
           });
+          // const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Area deleted successfully!",
+            message: "Table deleted successfully!",
+            data: entity,
           };
         } catch (error) {
           ctx.body = {
