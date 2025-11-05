@@ -459,6 +459,35 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiAreaArea extends Struct.CollectionTypeSchema {
+  collectionName: 'areas';
+  info: {
+    displayName: 'Area';
+    pluralName: 'areas';
+    singularName: 'area';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    area_id: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::area.area'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    path: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -474,18 +503,45 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    image: Schema.Attribute.Component<'shared.profile', false>;
+    image_pth: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::category.category'
     > &
       Schema.Attribute.Private;
-    menu_items: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::menu-item.menu-item'
-    >;
     name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCompanyCompany extends Struct.CollectionTypeSchema {
+  collectionName: 'companies';
+  info: {
+    displayName: 'Company';
+    pluralName: 'companies';
+    singularName: 'company';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Description: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::company.company'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    path: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -536,7 +592,8 @@ export interface ApiMenuItemMenuItem extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    category_id: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -584,6 +641,7 @@ export interface ApiTableTable extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    area_id: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -607,7 +665,8 @@ export interface ApiTableTable extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    waiter: Schema.Attribute.Relation<'manyToOne', 'api::waiter.waiter'>;
+    waiter_id: Schema.Attribute.Integer;
+    waiter_name: Schema.Attribute.String;
   };
 }
 
@@ -636,11 +695,41 @@ export interface ApiWaiterWaiter extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    tables: Schema.Attribute.Relation<'oneToMany', 'api::table.table'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     waiterAlias: Schema.Attribute.UID<'alias'>;
+  };
+}
+
+export interface ApiWarehouseWarehouse extends Struct.CollectionTypeSchema {
+  collectionName: 'warehouses';
+  info: {
+    displayName: 'warehouse';
+    pluralName: 'warehouses';
+    singularName: 'warehouse';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::warehouse.warehouse'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    path: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1155,11 +1244,14 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
+      'api::area.area': ApiAreaArea;
       'api::category.category': ApiCategoryCategory;
+      'api::company.company': ApiCompanyCompany;
       'api::global.global': ApiGlobalGlobal;
       'api::menu-item.menu-item': ApiMenuItemMenuItem;
       'api::table.table': ApiTableTable;
       'api::waiter.waiter': ApiWaiterWaiter;
+      'api::warehouse.warehouse': ApiWarehouseWarehouse;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

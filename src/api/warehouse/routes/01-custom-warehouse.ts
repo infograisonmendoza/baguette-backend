@@ -2,32 +2,32 @@ export default {
   routes: [
     {
       method: "POST",
-      path: "/tables/list",
-      handler: "table.find",
+      path: "/warehouses/list",
+      handler: "warehouse.find",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/create",
-      handler: "table.create",
+      path: "/warehouses/create",
+      handler: "warehouse.create",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/edit",
-      handler: "table.edit",
+      path: "/warehouses/edit",
+      handler: "warehouse.edit",
       config: {
         auth: false,
       },
     },
     {
       method: "DELETE",
-      path: "/tables/delete/:id",
-      handler: "table.delete",
+      path: "/warehouses/delete",
+      handler: "warehouse.delete",
       config: {
         auth: false,
       },

@@ -31,22 +31,6 @@
       "type": "uid",
       "targetField": "table_name"
     },
-    "waiter": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::waiter.waiter",
-      "conditions": {
-        "visible": {
-          "!=": [
-            {
-              "var": "occupied"
-            },
-            false
-          ]
-        }
-      },
-      "inversedBy": "tables"
-    },
     "customerName": {
       "type": "string",
       "conditions": {
@@ -61,6 +45,15 @@
       },
       "minLength": 6,
       "unique": true
+    },
+    "area_id": {
+      "type": "integer"
+    },
+    "waiter_id": {
+      "type": "integer"
+    },
+    "waiter_name": {
+      "type": "string"
     }
   }
 }

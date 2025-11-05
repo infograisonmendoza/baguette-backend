@@ -1,55 +1,31 @@
 /**
- * waiter controller
+ * warehouse controller
  */
 
-import { factories } from "@strapi/strapi";
-
-const propsToShow = [
-  "id",
-  "firstName",
-  "lastName",
-  "alias",
-  "active",
-  "waiterAlias",
-  "table_id",
-];
+import { Data, factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::waiter.waiter",
+  "api::warehouse.warehouse",
   ({ strapi }) => {
-    const service = strapi.service("api::waiter.waiter");
-    const DB = strapi.db.query("api::waiter.waiter");
+    const service = strapi.service("api::warehouse.warehouse");
+    const DB = strapi.db.query("api::warehouse.warehouse");
     return {
       async find(ctx) {
         try {
-          const body = ctx.request.body.data;
           ctx.query = {
             ...ctx.query,
             populate: "*",
           };
-
-          const props = Object.entries(body);
-
-          if (props.length) {
-            for await (const [key, value] of props) {
-              const filters: any = ctx.query.filters;
-              const opt = typeof value !== "string" ? "$eq" : "$containsi";
-
-              ctx.query = {
-                ...ctx.query,
-                filters: {
-                  ...filters,
-                  [key]: { [opt]: value },
-                },
-              };
-            }
-          }
-
           const { data, meta } = await super.find(ctx);
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "" };
+          ctx.body = {
+            success: true,
+            message: "",
+            data,
+            ...pagination,
+          };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -61,17 +37,17 @@ export default factories.createCoreController(
         try {
           const { data } = ctx.request.body;
 
-          if (!data.firstName || !data.lastName) {
-            return ctx.badRequest("First and last name are required! >:( ");
+          if (!data || !data.name) {
+            return ctx.badRequest("Empty body");
           }
 
           const entity = await service.create({ data });
-          console.log(data.table_id, entity);
+          const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Waiter created successfully :D",
-            data: { ...entity, table_id: data.table_id },
+            message: "Warehouse created successfully",
+            data: sanitized,
           };
         } catch (error) {
           ctx.body = {
@@ -83,20 +59,16 @@ export default factories.createCoreController(
       async edit(ctx) {
         try {
           const { data } = ctx.request.body;
-
-          if (!data.firstName || !data.lastName) {
-            return ctx.badRequest("First and last name are required! >:( ");
+          if (!data || !data.id) {
+            return ctx.badRequest("ID required!");
           }
 
-          const entity = await DB.update({
-            where: { id: data.id },
-            data,
-          });
+          const entity = await DB.update({ where: data.id, data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Waiter created successfully :D",
+            message: "Edited successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -124,7 +96,7 @@ export default factories.createCoreController(
           const { firstName, lastName, alias } = existing;
           ctx.body = {
             success: true,
-            message: `${firstName} ${lastName} alias ${alias}, has been promoted to customer :D`,
+            message: `Warehouse successfully deleted!`,
           };
         } catch (err) {
           ctx.body = {

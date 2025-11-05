@@ -2,32 +2,32 @@ export default {
   routes: [
     {
       method: "POST",
-      path: "/tables/list",
-      handler: "table.find",
+      path: "/areas/list",
+      handler: "area.find",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/create",
-      handler: "table.create",
+      path: "/areas/create",
+      handler: "area.create",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/edit",
-      handler: "table.edit",
+      path: "/areas/edit",
+      handler: "area.edit",
       config: {
         auth: false,
       },
     },
     {
       method: "DELETE",
-      path: "/tables/delete/:id",
-      handler: "table.delete",
+      path: "/areas/delete/:id",
+      handler: "area.delete",
       config: {
         auth: false,
       },

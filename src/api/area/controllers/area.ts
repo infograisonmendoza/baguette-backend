@@ -1,24 +1,15 @@
 /**
- * waiter controller
+ * area controller
  */
 
 import { factories } from "@strapi/strapi";
 
-const propsToShow = [
-  "id",
-  "firstName",
-  "lastName",
-  "alias",
-  "active",
-  "waiterAlias",
-  "table_id",
-];
-
 export default factories.createCoreController(
-  "api::waiter.waiter",
+  "api::area.area",
   ({ strapi }) => {
-    const service = strapi.service("api::waiter.waiter");
-    const DB = strapi.db.query("api::waiter.waiter");
+    const service = strapi.service("api::area.area");
+    const DB = strapi.db.query("api::area.area");
+
     return {
       async find(ctx) {
         try {
@@ -33,7 +24,7 @@ export default factories.createCoreController(
           if (props.length) {
             for await (const [key, value] of props) {
               const filters: any = ctx.query.filters;
-              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+              const opt = typeof value !== 'string' ? '$eq' : '$containsi'
 
               ctx.query = {
                 ...ctx.query,
@@ -49,7 +40,12 @@ export default factories.createCoreController(
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "" };
+          return { 
+            data, 
+            ...pagination, 
+            status: true, 
+            message: "OK" 
+          };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -60,18 +56,17 @@ export default factories.createCoreController(
       async create(ctx) {
         try {
           const { data } = ctx.request.body;
-
-          if (!data.firstName || !data.lastName) {
-            return ctx.badRequest("First and last name are required! >:( ");
+          if (!data) {
+            return ctx.badRequest("Empty body");
           }
 
           const entity = await service.create({ data });
-          console.log(data.table_id, entity);
+          const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Waiter created successfully :D",
-            data: { ...entity, table_id: data.table_id },
+            message: "Area crated successfully!",
+            data: sanitized,
           };
         } catch (error) {
           ctx.body = {
@@ -83,9 +78,8 @@ export default factories.createCoreController(
       async edit(ctx) {
         try {
           const { data } = ctx.request.body;
-
-          if (!data.firstName || !data.lastName) {
-            return ctx.badRequest("First and last name are required! >:( ");
+          if (!data || !data.id) {
+            return ctx.badRequest("Id required!");
           }
 
           const entity = await DB.update({
@@ -96,7 +90,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Waiter created successfully :D",
+            message: "Table edited successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -109,27 +103,34 @@ export default factories.createCoreController(
       async delete(ctx) {
         try {
           const { id } = ctx.params;
-          if (!id) return ctx.badRequest("ID required");
+          const ID = parseInt(id, 10);
 
-          const existing = await DB.findOne({
-            where: { id: parseInt(id, 10) },
+          if (!id) return ctx.badRequest("id required!");
+
+          const found = await DB.findOne({
+            where: { id: ID },
           });
 
-          if (!existing) return ctx.notFound("Waiter doesn't exist");
+          if (!found) return ctx.notFound("Area doesn't exist");
 
-          await DB.delete({
-            where: { id: parseInt(id, 10) },
+          const entity = await DB.update({
+            where: { id: ID },
+            data: {
+              ...found,
+              active: false,
+            },
           });
+          // const sanitized = await this.sanitizeOutput(entity, ctx);
 
-          const { firstName, lastName, alias } = existing;
           ctx.body = {
             success: true,
-            message: `${firstName} ${lastName} alias ${alias}, has been promoted to customer :D`,
+            message: "Table deleted successfully!",
+            data: entity,
           };
-        } catch (err) {
+        } catch (error) {
           ctx.body = {
             success: false,
-            message: err.message,
+            message: error.message,
           };
         }
       },

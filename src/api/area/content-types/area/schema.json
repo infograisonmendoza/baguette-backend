@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "areas",
+  "info": {
+    "singularName": "area",
+    "pluralName": "areas",
+    "displayName": "Area"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "text"
+    },
+    "path": {
+      "type": "string"
+    },
+    "active": {
+      "type": "boolean",
+      "required": false,
+      "default": true
+    },
+    "area_id": {
+      "type": "integer"
+    }
+  }
+}

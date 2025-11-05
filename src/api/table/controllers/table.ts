@@ -2,30 +2,126 @@
  * table controller
  */
 
-import { factories } from '@strapi/strapi'
+import { factories } from "@strapi/strapi";
 
-export default factories.createCoreController('api::table.table', ({ strapi }) => ({
-    async customAction (ctx) {
+export default factories.createCoreController(
+  "api::table.table",
+  ({ strapi }) => {
+    const service = strapi.service("api::table.table");
+    const DB = strapi.db.query("api::table.table");
+
+    return {
+      async find(ctx) {
         try {
-            const { status, message } = ctx.response;
-            const { data, meta } = await super.find(ctx)
-            ctx.body = { 
-                response: JSON.stringify(ctx.response),
-                state: JSON.stringify(ctx.state),
-                status: JSON.stringify(ctx.status),
-                success: status,
-                message,
-                data,
-                total: meta.pagination.total || 0,
+          const body = ctx.request.body.data;
+          ctx.query = {
+            ...ctx.query,
+            populate: "*",
+          };
+
+          const props = Object.entries(body);
+
+          if (props.length) {
+            for await (const [key, value] of props) {
+              const filters: any = ctx.query.filters;
+              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+
+              ctx.query = {
+                ...ctx.query,
+                filters: {
+                  ...filters,
+                  [key]: { [opt]: value },
+                },
+              };
             }
-        } catch (err) {
-            ctx.body = err
+          }
+
+          const { data, meta } = await super.find(ctx);
+          const { pagination } = meta;
+
+          meta.date = Date.now();
+          return { data, ...pagination, status: true, message: "Ok" };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
         }
-    },
-    async find(ctx) {
-        const { data, meta } = await super.find(ctx);
-        const { status, message } = ctx.response;
-        meta.date = Date.now();
-        return { data, meta, status, message }
-    }
-}));
+      },
+      async create(ctx) {
+        try {
+          const { data } = ctx.request.body;
+          if (!data) {
+            return ctx.badRequest("Empty body");
+          }
+
+          console.log(data);
+
+          const entity = await service.create({ data });
+          const sanitized = await this.sanitizeOutput(entity, ctx);
+
+          ctx.body = {
+            success: true,
+            message: "Table created successfully!",
+            data: sanitized,
+          };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
+        }
+      },
+      async edit(ctx) {
+        try {
+          const { data } = ctx.request.body;
+          if (!data || !data.id) {
+            return ctx.badRequest("Id required!");
+          }
+
+          const entity = await service.update(data.id, { data });
+          const sanitized = await this.sanitizeOutput(entity, ctx);
+
+          ctx.body = {
+            success: true,
+            message: "Table edited successfully!",
+            data: sanitized,
+          };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
+        }
+      },
+      async delete(ctx) {
+        try {
+          const { id } = ctx.params;
+          const ID = parseInt(id, 10);
+
+          if (!id) return ctx.badRequest("id required!");
+
+          const found = await DB.findOne({
+            where: { id: ID },
+          });
+
+          if (!found) return ctx.notFound("Table doesn't exist");
+
+          await DB.delete({
+            where: { id: ID },
+          });
+
+          ctx.body = {
+            success: true,
+            message: "Table deleted successfully!",
+          };
+        } catch (error) {
+          ctx.body = {
+            success: false,
+            message: error.message,
+          };
+        }
+      },
+    };
+  }
+);

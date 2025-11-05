@@ -2,32 +2,32 @@ export default {
   routes: [
     {
       method: "POST",
-      path: "/tables/list",
-      handler: "table.find",
+      path: "/companies/list",
+      handler: "company.find",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/create",
-      handler: "table.create",
+      path: "/companies/create",
+      handler: "company.create",
       config: {
         auth: false,
       },
     },
     {
       method: "POST",
-      path: "/tables/edit",
-      handler: "table.edit",
+      path: "/companies/edit",
+      handler: "company.edit",
       config: {
         auth: false,
       },
     },
     {
       method: "DELETE",
-      path: "/tables/delete/:id",
-      handler: "table.delete",
+      path: "/companies/delete/:id",
+      handler: "company.delete",
       config: {
         auth: false,
       },

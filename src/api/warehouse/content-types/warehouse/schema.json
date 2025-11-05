@@ -1,31 +1,27 @@
 {
   "kind": "collectionType",
-  "collectionName": "waiters",
+  "collectionName": "warehouses",
   "info": {
-    "singularName": "waiter",
-    "pluralName": "waiters",
-    "displayName": "Waiter"
+    "singularName": "warehouse",
+    "pluralName": "warehouses",
+    "displayName": "warehouse"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "firstName": {
+    "name": {
       "type": "string"
     },
-    "lastName": {
+    "description": {
       "type": "string"
     },
-    "alias": {
+    "path": {
       "type": "string"
     },
     "active": {
       "type": "boolean"
-    },
-    "waiterAlias": {
-      "type": "uid",
-      "targetField": "alias"
     }
   }
 }
