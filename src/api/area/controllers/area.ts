@@ -1,14 +1,14 @@
 /**
- * category controller
+ * area controller
  */
 
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::category.category",
+  "api::area.area",
   ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
+    const service = strapi.service("api::area.area");
+    const DB = strapi.db.query("api::area.area");
 
     return {
       async find(ctx) {
@@ -24,7 +24,7 @@ export default factories.createCoreController(
           if (props.length) {
             for await (const [key, value] of props) {
               const filters: any = ctx.query.filters;
-              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+              const opt = typeof value !== 'string' ? '$eq' : '$containsi'
 
               ctx.query = {
                 ...ctx.query,
@@ -40,7 +40,12 @@ export default factories.createCoreController(
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "OK" };
+          return { 
+            data, 
+            ...pagination, 
+            status: true, 
+            message: "OK" 
+          };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -60,7 +65,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
+            message: "Area crated successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -85,7 +90,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category edited successfully!",
+            message: "Table edited successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -106,16 +111,21 @@ export default factories.createCoreController(
             where: { id: ID },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!found) return ctx.notFound("Area doesn't exist");
 
-          await DB.update({
+          const entity = await DB.update({
             where: { id: ID },
-            data: { ...found, active: false },
+            data: {
+              ...found,
+              active: false,
+            },
           });
+          // const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: "Table deleted successfully!",
+            data: entity,
           };
         } catch (error) {
           ctx.body = {

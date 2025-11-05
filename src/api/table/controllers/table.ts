@@ -1,14 +1,14 @@
 /**
- * category controller
+ * table controller
  */
 
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::category.category",
+  "api::table.table",
   ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
+    const service = strapi.service("api::table.table");
+    const DB = strapi.db.query("api::table.table");
 
     return {
       async find(ctx) {
@@ -40,7 +40,7 @@ export default factories.createCoreController(
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "OK" };
+          return { data, ...pagination, status: true, message: "Ok" };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -55,12 +55,14 @@ export default factories.createCoreController(
             return ctx.badRequest("Empty body");
           }
 
+          console.log(data);
+
           const entity = await service.create({ data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
+            message: "Table created successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -77,15 +79,12 @@ export default factories.createCoreController(
             return ctx.badRequest("Id required!");
           }
 
-          const entity = await DB.update({
-            where: { id: data.id },
-            data,
-          });
+          const entity = await service.update(data.id, { data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Category edited successfully!",
+            message: "Table edited successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -106,16 +105,15 @@ export default factories.createCoreController(
             where: { id: ID },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!found) return ctx.notFound("Table doesn't exist");
 
-          await DB.update({
+          await DB.delete({
             where: { id: ID },
-            data: { ...found, active: false },
           });
 
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: "Table deleted successfully!",
           };
         } catch (error) {
           ctx.body = {

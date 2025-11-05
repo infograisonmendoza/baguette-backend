@@ -1,15 +1,24 @@
 /**
- * category controller
+ * waiter controller
  */
 
 import { factories } from "@strapi/strapi";
 
-export default factories.createCoreController(
-  "api::category.category",
-  ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
+const propsToShow = [
+  "id",
+  "firstName",
+  "lastName",
+  "alias",
+  "active",
+  "waiterAlias",
+  "table_id",
+];
 
+export default factories.createCoreController(
+  "api::waiter.waiter",
+  ({ strapi }) => {
+    const service = strapi.service("api::waiter.waiter");
+    const DB = strapi.db.query("api::waiter.waiter");
     return {
       async find(ctx) {
         try {
@@ -40,7 +49,7 @@ export default factories.createCoreController(
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "OK" };
+          return { data, ...pagination, status: true, message: "" };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -51,17 +60,18 @@ export default factories.createCoreController(
       async create(ctx) {
         try {
           const { data } = ctx.request.body;
-          if (!data) {
-            return ctx.badRequest("Empty body");
+
+          if (!data.firstName || !data.lastName) {
+            return ctx.badRequest("First and last name are required! >:( ");
           }
 
           const entity = await service.create({ data });
-          const sanitized = await this.sanitizeOutput(entity, ctx);
+          console.log(data.table_id, entity);
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
-            data: sanitized,
+            message: "Waiter created successfully :D",
+            data: { ...entity, table_id: data.table_id },
           };
         } catch (error) {
           ctx.body = {
@@ -73,8 +83,9 @@ export default factories.createCoreController(
       async edit(ctx) {
         try {
           const { data } = ctx.request.body;
-          if (!data || !data.id) {
-            return ctx.badRequest("Id required!");
+
+          if (!data.firstName || !data.lastName) {
+            return ctx.badRequest("First and last name are required! >:( ");
           }
 
           const entity = await DB.update({
@@ -85,7 +96,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category edited successfully!",
+            message: "Waiter created successfully :D",
             data: sanitized,
           };
         } catch (error) {
@@ -98,29 +109,27 @@ export default factories.createCoreController(
       async delete(ctx) {
         try {
           const { id } = ctx.params;
-          const ID = parseInt(id, 10);
+          if (!id) return ctx.badRequest("ID required");
 
-          if (!id) return ctx.badRequest("id required!");
-
-          const found = await DB.findOne({
-            where: { id: ID },
+          const existing = await DB.findOne({
+            where: { id: parseInt(id, 10) },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!existing) return ctx.notFound("Waiter doesn't exist");
 
-          await DB.update({
-            where: { id: ID },
-            data: { ...found, active: false },
+          await DB.delete({
+            where: { id: parseInt(id, 10) },
           });
 
+          const { firstName, lastName, alias } = existing;
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: `${firstName} ${lastName} alias ${alias}, has been promoted to customer :D`,
           };
-        } catch (error) {
+        } catch (err) {
           ctx.body = {
             success: false,
-            message: error.message,
+            message: err.message,
           };
         }
       },

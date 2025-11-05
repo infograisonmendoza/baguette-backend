@@ -4,12 +4,11 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
-    "start": "strapi start",
-    "develop": "strapi develop",
+    "start": "strapi develop",
+    "prod": "strapi start",
     "build": "strapi build",
     "console": "strapi console",
     "deploy": "strapi deploy",
-    "dev": "strapi develop",
     "seed:example": "node ./scripts/seed.js",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
@@ -17,6 +16,7 @@
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.26.0",
+    "@strapi/plugin-graphql": "^5.27.0",
     "@strapi/plugin-users-permissions": "5.26.0",
     "@strapi/strapi": "5.26.0",
     "better-sqlite3": "11.3.0",

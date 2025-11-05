@@ -1,14 +1,14 @@
 /**
- * category controller
+ * company controller
  */
 
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::category.category",
+  "api::company.company",
   ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
+    const service = strapi.service("api::company.company");
+    const DB = strapi.db.query("api::company.company");
 
     return {
       async find(ctx) {
@@ -38,6 +38,7 @@ export default factories.createCoreController(
 
           const { data, meta } = await super.find(ctx);
           const { pagination } = meta;
+          const { status, message } = ctx.response;
 
           meta.date = Date.now();
           return { data, ...pagination, status: true, message: "OK" };
@@ -60,7 +61,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
+            message: "Company created successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -74,19 +75,18 @@ export default factories.createCoreController(
         try {
           const { data } = ctx.request.body;
           if (!data || !data.id) {
-            return ctx.badRequest("Id required!");
+            return ctx.badRequest("ID required!");
           }
 
           const entity = await DB.update({
             where: { id: data.id },
             data,
           });
-          const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
             message: "Category edited successfully!",
-            data: sanitized,
+            data: entity,
           };
         } catch (error) {
           ctx.body = {
@@ -106,7 +106,7 @@ export default factories.createCoreController(
             where: { id: ID },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!found) return ctx.notFound("Company not found!");
 
           await DB.update({
             where: { id: ID },
@@ -115,7 +115,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: "Company deleted successfully!",
           };
         } catch (error) {
           ctx.body = {

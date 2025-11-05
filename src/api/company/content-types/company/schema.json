@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "categories",
+  "collectionName": "companies",
   "info": {
-    "singularName": "category",
-    "pluralName": "categories",
-    "displayName": "Category"
+    "singularName": "company",
+    "pluralName": "companies",
+    "displayName": "Company"
   },
   "options": {
     "draftAndPublish": true
@@ -14,12 +14,15 @@
     "name": {
       "type": "string"
     },
+    "Description": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
     "active": {
       "type": "boolean",
       "default": true
-    },
-    "image_pth": {
-      "type": "text"
     }
   }
 }

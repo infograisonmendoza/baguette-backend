@@ -1,46 +1,31 @@
 /**
- * category controller
+ * warehouse controller
  */
 
-import { factories } from "@strapi/strapi";
+import { Data, factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::category.category",
+  "api::warehouse.warehouse",
   ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
-
+    const service = strapi.service("api::warehouse.warehouse");
+    const DB = strapi.db.query("api::warehouse.warehouse");
     return {
       async find(ctx) {
         try {
-          const body = ctx.request.body.data;
           ctx.query = {
             ...ctx.query,
             populate: "*",
           };
-
-          const props = Object.entries(body);
-
-          if (props.length) {
-            for await (const [key, value] of props) {
-              const filters: any = ctx.query.filters;
-              const opt = typeof value !== "string" ? "$eq" : "$containsi";
-
-              ctx.query = {
-                ...ctx.query,
-                filters: {
-                  ...filters,
-                  [key]: { [opt]: value },
-                },
-              };
-            }
-          }
-
           const { data, meta } = await super.find(ctx);
           const { pagination } = meta;
 
           meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "OK" };
+          ctx.body = {
+            success: true,
+            message: "",
+            data,
+            ...pagination,
+          };
         } catch (error) {
           ctx.body = {
             success: false,
@@ -51,7 +36,8 @@ export default factories.createCoreController(
       async create(ctx) {
         try {
           const { data } = ctx.request.body;
-          if (!data) {
+
+          if (!data || !data.name) {
             return ctx.badRequest("Empty body");
           }
 
@@ -60,7 +46,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
+            message: "Warehouse created successfully",
             data: sanitized,
           };
         } catch (error) {
@@ -74,18 +60,15 @@ export default factories.createCoreController(
         try {
           const { data } = ctx.request.body;
           if (!data || !data.id) {
-            return ctx.badRequest("Id required!");
+            return ctx.badRequest("ID required!");
           }
 
-          const entity = await DB.update({
-            where: { id: data.id },
-            data,
-          });
+          const entity = await DB.update({ where: data.id, data });
           const sanitized = await this.sanitizeOutput(entity, ctx);
 
           ctx.body = {
             success: true,
-            message: "Category edited successfully!",
+            message: "Edited successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -98,29 +81,27 @@ export default factories.createCoreController(
       async delete(ctx) {
         try {
           const { id } = ctx.params;
-          const ID = parseInt(id, 10);
+          if (!id) return ctx.badRequest("ID required");
 
-          if (!id) return ctx.badRequest("id required!");
-
-          const found = await DB.findOne({
-            where: { id: ID },
+          const existing = await DB.findOne({
+            where: { id: parseInt(id, 10) },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!existing) return ctx.notFound("Waiter doesn't exist");
 
-          await DB.update({
-            where: { id: ID },
-            data: { ...found, active: false },
+          await DB.delete({
+            where: { id: parseInt(id, 10) },
           });
 
+          const { firstName, lastName, alias } = existing;
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: `Warehouse successfully deleted!`,
           };
-        } catch (error) {
+        } catch (err) {
           ctx.body = {
             success: false,
-            message: error.message,
+            message: err.message,
           };
         }
       },

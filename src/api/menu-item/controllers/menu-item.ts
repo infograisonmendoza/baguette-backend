@@ -1,58 +1,70 @@
 /**
- * category controller
+ * menu-item controller
  */
 
 import { factories } from "@strapi/strapi";
+const PropsToShow = [
+  "id",
+  "name",
+  "description",
+  "price",
+  "photos",
+  "quantity",
+  "total_price",
+  "profile_image",
+  "observation",
+  "options",
+  "category",
+  "active",
+];
 
 export default factories.createCoreController(
-  "api::category.category",
+  "api::menu-item.menu-item",
   ({ strapi }) => {
-    const service = strapi.service("api::category.category");
-    const DB = strapi.db.query("api::category.category");
+    const service = strapi.service("api::menu-item.menu-item");
+    const DB = strapi.db.query("api::menu-item.menu-item");
 
     return {
       async find(ctx) {
-        try {
-          const body = ctx.request.body.data;
-          ctx.query = {
-            ...ctx.query,
-            populate: "*",
-          };
+        const body = ctx.request.body.data;
+        ctx.query = {
+          ...ctx.query,
+          populate: "*",
+        };
 
-          const props = Object.entries(body);
+        const props = Object.entries(body);
 
-          if (props.length) {
-            for await (const [key, value] of props) {
-              const filters: any = ctx.query.filters;
-              const opt = typeof value !== "string" ? "$eq" : "$containsi";
+        if (props.length) {
+          for await (const [key, value] of props) {
+            const filters: any = ctx.query.filters;
+            const opt = typeof value !== "string" ? "$eq" : "$containsi";
 
-              ctx.query = {
-                ...ctx.query,
-                filters: {
-                  ...filters,
-                  [key]: { [opt]: value },
-                },
-              };
-            }
+            ctx.query = {
+              ...ctx.query,
+              filters: {
+                ...filters,
+                [key]: { [opt]: value },
+              },
+            };
           }
-
-          const { data, meta } = await super.find(ctx);
-          const { pagination } = meta;
-
-          meta.date = Date.now();
-          return { data, ...pagination, status: true, message: "OK" };
-        } catch (error) {
-          ctx.body = {
-            success: false,
-            message: error.message,
-          };
         }
+
+        const { data, meta } = await super.find(ctx);
+        const { pagination } = meta;
+
+        ctx.body = {
+          success: true,
+          message: "Category listed successfully!",
+          data,
+          ...pagination,
+        };
       },
       async create(ctx) {
         try {
           const { data } = ctx.request.body;
-          if (!data) {
-            return ctx.badRequest("Empty body");
+
+          if (!data.name || !data.price) {
+            return ctx.badRequest("Name and price are required! >:E");
           }
 
           const entity = await service.create({ data });
@@ -60,7 +72,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category crated successfully!",
+            message: "Category created successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -73,8 +85,9 @@ export default factories.createCoreController(
       async edit(ctx) {
         try {
           const { data } = ctx.request.body;
+
           if (!data || !data.id) {
-            return ctx.badRequest("Id required!");
+            return ctx.badRequest("No data provides for update");
           }
 
           const entity = await DB.update({
@@ -85,7 +98,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category edited successfully!",
+            message: "Category has been updated successfully!",
             data: sanitized,
           };
         } catch (error) {
@@ -106,7 +119,7 @@ export default factories.createCoreController(
             where: { id: ID },
           });
 
-          if (!found) return ctx.notFound("Category not found!");
+          if (!found) return ctx.notFound("Dish not found!");
 
           await DB.update({
             where: { id: ID },
@@ -115,7 +128,7 @@ export default factories.createCoreController(
 
           ctx.body = {
             success: true,
-            message: "Category deleted successfully!",
+            message: "Dish deleted successfully!",
           };
         } catch (error) {
           ctx.body = {
